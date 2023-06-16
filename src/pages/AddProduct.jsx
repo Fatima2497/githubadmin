@@ -21,7 +21,7 @@ let userSchema = Yup.object({
   price: Yup.string().required("Price is Required"),
   category: Yup.string().required("Category is Required"),
   brand: Yup.string().required("Brand is Required"),
-  colors: Yup
+  color: Yup
     .array()
     .min(1, "Pick at least one color")
     .required("Color is Required"),
@@ -46,7 +46,7 @@ const AddProduct = () => {
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
   const {isError, isLoading, isSuccess, createdProduct} = newProduct
-
+  console.log(colorState);
   useEffect(()=> {
     if(isSuccess && createdProduct){
       toast.success('Product Added Successfully!');
@@ -57,15 +57,16 @@ const AddProduct = () => {
   },[isError, isLoading, isSuccess])
 
   const coloropt = [];
-  colorState.forEach((i) => {
+  colorState?.forEach((i) => {
     coloropt.push({
       label: i.title,
       value: i._id,
     });
   });
 
+
   const img = []
-  imgState .forEach((i) => {
+  imgState.forEach((i) => {
     img.push({
       public_id: i.public_id,
       secure_url: i.secure_url,
@@ -73,7 +74,7 @@ const AddProduct = () => {
   });
   
   useEffect(() => {
-    formik.values.colors = color ? color : " " ;
+    formik.values.color = color ? color : " " ;
     formik.values.images = img;
   },[color,img])
 
@@ -86,7 +87,7 @@ const AddProduct = () => {
       price: "",
       category: "",
       brand: "",
-      colors: [],
+      color: "",
       quantity: "",
       tags:"",
       images: ""
@@ -96,18 +97,19 @@ const AddProduct = () => {
       // alert(JSON.stringify(values))
       dispatch(createProducts(values))
       formik.resetForm()
-      setColor(null)
       setTimeout(()=> {
         navigate("/admin/product-list")
-      },3000)
+      },300)
     },
   });
 
   const handleColors = (e) => {
     setColor(e)
+    // console.log(e);
+    
     
   }
- 
+  console.log(color);
   const [desc, setDesc] = useState();
   const handleDesc = (e) => {
     // e.target.value
@@ -202,19 +204,14 @@ const AddProduct = () => {
             mode="multiple"
             allowClear
             className="w-100"
-            placeholder="Select colors"
+            placeholder="Select color"
             defaultValue={color}
             onChange={(i) => handleColors(i)}
             options={coloropt}
           />
            <div className="error text-center">
-            {formik.touched.colors && formik.errors.colors ? (
-              <div>{formik.errors.colors}</div>
-            ) : null}
-          </div>
-          <div className="error text-center">
-            {formik.touched.colors && formik.errors.colors ? (
-              <div>{formik.errors.colors}</div>
+            {formik.touched.color && formik.errors.color ? (
+              <div>{formik.errors.color}</div>
             ) : null}
           </div>
           <CustomInput
@@ -236,7 +233,7 @@ const AddProduct = () => {
             id=""
             className="form-control mt-3 py-3 mb-3"
           >
-            <option value="" disabled>Select Tags</option>
+            <option value="" >Select Tags</option>
             <option value="featured">Featured</option>
             <option value="popular">Popular</option>
             <option value="special">Special</option>

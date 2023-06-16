@@ -62,7 +62,7 @@ for (let i = 0; i < blogState.length; i++) {
   data1.push({
     key: i,
     title: blogState[i].title,
-    // description: blogState[i].description,
+    description: blogState[i].description,
     category: blogState[i].category,
     like: blogState[i].like,
     dislike: blogState[i].dislike,
