@@ -45,7 +45,13 @@ const Colorlist = () => {
   for (let i = 0; i < colorState.length; i++) {
     data1.push({
       key: i,
-      title: colorState[i].title,
+      title: (
+        <>
+        <ul className='list-group'>
+          <li className='list-group-item' style={{backgroundColor: colorState[i].title}}></li>
+        </ul>
+        </>
+      ),
       action:(
          <>
          <Link to={`/admin/color/${colorState[i]._id}`}><BiEdit style={{"color":"green"}} className="fs-4 text-decoration-none" /> </Link>

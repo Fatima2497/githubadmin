@@ -5,8 +5,9 @@ import { Table } from "antd";
 import ReactStars from "react-rating-stars-component";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getOrderMonth, getOrderYearly } from "../features/auth/authSlice";
+import { getAllOrders, getOrderMonth, getOrderYearly } from "../features/auth/authSlice";
 import { useState } from "react";
+import { getProducts, getRating } from "../features/product/productSlice";
 
 const columns = [
   {
@@ -18,14 +19,19 @@ const columns = [
     dataIndex: "name",
   },
   {
-    title: "Product",
-    dataIndex: "product",
+    title: "Order Date",
+    dataIndex: "date",
+  },
+  {
+    title: "Total Amount",
+    dataIndex: "amount",
   },
   {
     title: "Status",
     dataIndex: "status",
   },
 ];
+
 const data1 = [];
 for (let i = 0; i < 46; i++) {
   data1.push({
@@ -169,6 +175,37 @@ const Dashboard = () => {
       },
     },
   };
+
+  useEffect(()=>{
+    dispatch(getAllOrders())
+    dispatch(getRating())
+  },[])
+  
+  const productState = useSelector((state) => state?.product?.rating);
+
+
+
+
+  const orderState = useSelector((state) => state.auth.orders);
+  const data1 = [];
+  for (let i = 0; i < orderState?.length; i++) {
+    data1.push({
+      key: i,
+      name:
+        orderState[i]?.shippingInfo?.firstname +
+        " " +
+        orderState[i]?.shippingInfo?.lastname,
+      date: new Date(orderState[i].createdAt).toLocaleString("ur-PK", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      }),
+      amount: orderState[i]?.totalAmount,
+      status: orderState[i].orderStatus,
+      })
+    }
   return (
     <div>
       <h3 className="mb-4 title">Dashboard</h3>
@@ -185,7 +222,7 @@ const Dashboard = () => {
             <p className="mb-0">Income in Last Year from Today</p>
           </div>
         </div>
-        <div className="d-flex flex-grow-1 p-3 justify-content-between align-items-end bg-white p-3 rounded-3 ">
+        <div className="d-flex flex-grow-1 justify-content-between align-items-end bg-white p-3 rounded-3 ">
           <div>
             <p className="desc">Total Sales</p> 
             <h4 className="mb-0 sub-title">{yearlyData?.count}</h4>
@@ -220,11 +257,14 @@ const Dashboard = () => {
       </div>
       <div className="mt-4 bg-white p-3">
         <h3 className="mb-4">Recent Reviews</h3>
-        <div className="d-flex gap-10 justify-content-between align-items-center">
+        {
+          productState && productState?.map((item,index)=>{
+            return(
+              <div className="d-flex gap-10 justify-content-between align-items-center">
           <div className="d-flex justify-content-start align-items-center gap-2">
             <div>
               <img
-                src="https://images.pexels.com/photos/3756679/pexels-photo-3756679.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                src={item?.images[0]?.secure_url}
                 alt="people"
                 className="img-fluid"
                 width={70}
@@ -232,14 +272,20 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <h5 className="mb-2">Wiper Blades Brandix WL2</h5>
-              <p className="mb-2">Reviewed by Ryan Food</p>
+              <h5 className="mb-2">{item?.title}</h5>
+              <p className="mb-2">{item?.ratings[0]?.postedBy?.firstname + " " + item?.ratings[0]?.postedBy?.lastname}</p>
+              <p className="mb-2">{item?.ratings[0]?.comment}</p>
             </div>
           </div>
           <div>
-            <ReactStars count={5} value={4}size={24} edit={false} activeColor="#ffd700" />,
+            <ReactStars count={5} value={Number(item?.totalrating)}size={24} edit={false} activeColor="#ffd700" />,
           </div>
         </div>
+            )
+          }
+          )
+          
+        }
       </div>
     </div>
   );

@@ -18,14 +18,24 @@ import { Button, Layout, Menu, theme } from "antd";
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import mypic from "../images/mypic2.png";
+import { useSelector } from "react-redux";
 
 const MainLayout = () => {
   const { Header, Sider, Content } = Layout;
+  const data = (JSON.parse(localStorage.getItem("user")));
 
+  
   let iconStyles = { color: "white" };
   const navigate = useNavigate();
 
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
+    navigate("/");
+  };
+
   return (
     <>
       <Layout>
@@ -211,19 +221,16 @@ const MainLayout = () => {
                   aria-labelledby="dropdownMenuButton1"
                 >
                   <li>
-                    <Link className="dropdown-item py-1 mb-1" style={{"height": "auto", "lineHeight":"20px"}} to="/">
+                    <Link className="dropdown-item py-1 mb-1" style={{"height": "auto", "lineHeight":"20px"}} to={`profile/${data?._id}`}>
                       View Profile
                     </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item py-1 mb-1" style={{"height": "auto", "lineHeight":"20px"}} to="/">
-                      Change Password
-                    </Link>
-                  </li>
-                  <li>
-                    <Link className="dropdown-item py-1 mb-1" style={{"height": "auto", "lineHeight":"20px"}} to="/">
+                    <button 
+                    onClick={handleLogout}
+                    className="border-0 bg-transparent text-center" style={{"height": "auto", "lineHeight":"20px"}} type="button">
                     SignOut
-                    </Link>
+                    </button>
                   </li>
                 </div>
               </div>

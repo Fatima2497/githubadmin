@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
+import { toast } from "react-toastify";
 
 
 const getData = localStorage.getItem("user") ? localStorage.getItem("user") : null
@@ -68,6 +69,47 @@ export const getOrderYearly = createAsyncThunk(
     }
   }
 );
+
+export const getaUser = createAsyncThunk(
+  "auth/get-user",
+  async(id,thunkAPI)=>{
+  try{
+      return await authService.getUser(id)
+  }catch(e){
+      return thunkAPI.rejectWithValue(e)
+  }
+})
+
+export const updateUser = createAsyncThunk(
+  "auth/update-user",
+  async(data,thunkAPI)=>{
+  try{
+      return await authService.myProfile(data)
+  }catch(e){
+    console.log(e);
+      return thunkAPI.rejectWithValue(e)
+  }
+})
+
+export const forgetPassToken = createAsyncThunk(
+  "auth/post-pass",
+  async(data,thunkAPI)=>{
+  try{
+      return await authService.forgetPass(data)
+  }catch(e){
+      return thunkAPI.rejectWithValue(e)
+  }
+})
+
+export const resetPassToken = createAsyncThunk(
+  "auth/put-resetpass",
+  async(data,thunkAPI)=>{
+  try{
+      return await authService.resetPass(data)
+  }catch(e){
+      return thunkAPI.rejectWithValue(e)
+  }
+})
 
 
 export const authSlice = createSlice({
@@ -146,6 +188,87 @@ export const authSlice = createSlice({
           (state.isSuccess = false),
           (state.orders = null);
       })
+      .addCase(getaUser.pending, (state)=> {
+        state.isLoading = true;
+    })
+    .addCase(getaUser.fulfilled, (state,action)=>{
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.firstname = action.payload.firstname;
+        state.lastname = action.payload.lastname;
+        state.mobile = action.payload.mobile;
+        state.email = action.payload.email;
+    })
+    .addCase(getaUser.rejected, (state,action)=>{
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+    })
+      .addCase(updateUser.pending, (state)=> {
+        state.isLoading = true;
+    })
+    .addCase(updateUser.fulfilled, (state,action)=>{
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.profile = action.payload;
+        if(state.isSuccess === true){
+            toast.success("Your Profile is updated")
+        }
+    })
+    .addCase(updateUser.rejected, (state,action)=>{
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if(state.isError === true){
+            toast.error("No Profile is updated")
+        }
+    })
+    .addCase(forgetPassToken.pending, (state)=> {
+      state.isLoading = true;
+  })
+  .addCase(forgetPassToken.fulfilled, (state,action)=>{
+      state.isLoading = false;
+      state.isError = false;
+      state.isSuccess = true;
+      state.gettoken = action.payload;
+      if(state.isSuccess === true){
+          toast.success("Email Sent Successful")
+      }
+  })
+  .addCase(forgetPassToken.rejected, (state,action)=>{
+      state.isLoading = false;
+      state.isError = true;
+      state.isSuccess = false;
+      state.message = action.error;
+      if(state.isError === true){
+          toast.error("No Email Sent")
+      }
+  })
+  .addCase(resetPassToken.pending, (state)=> {
+    state.isLoading = true;
+})
+.addCase(resetPassToken.fulfilled, (state,action)=>{
+    state.isLoading = false;
+    state.isError = false;
+    state.isSuccess = true;
+    state.setpass = action.payload;
+    if(state.isSuccess === true){
+        toast.success("Password Reset Successful")
+    }
+})
+.addCase(resetPassToken.rejected, (state,action)=>{
+    state.isLoading = false;
+    state.isError = true;
+    state.isSuccess = false;
+    state.message = action.error;
+    if(state.isError === true){
+        toast.error("No Password Reset")
+    }
+})
   },
 });
 

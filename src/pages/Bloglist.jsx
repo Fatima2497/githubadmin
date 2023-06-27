@@ -62,7 +62,11 @@ for (let i = 0; i < blogState.length; i++) {
   data1.push({
     key: i,
     title: blogState[i].title,
-    description: blogState[i].description,
+    description: (
+      <>
+      <p dangerouslySetInnerHTML={{__html: blogState[i].description?.substr(0,80)}}></p>
+      </>
+      ),
     category: blogState[i].category,
     like: blogState[i].like,
     dislike: blogState[i].dislike,

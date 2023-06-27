@@ -25,6 +25,9 @@ import AddCoupon from './pages/AddCoupon'
 import CouponList from './pages/CouponList'
 import ViewOrder from './pages/ViewOrder'
 import ViewEnq from './pages/ViewEnq'
+import Profile from './pages/Profile'
+import { PrivateRoutes } from './routing/PrivateRoutes'
+import Error from './pages/Error'
 
 
 
@@ -36,36 +39,39 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="resetpassword" element={<ResetPassword /> } />
+          <Route path="reset-password/:token" element={<ResetPassword /> } />
           <Route path="forgetpassword" element={<ForgotPassword />} />
-          <Route path="/admin" element={<MainLayout />}>
-            <Route  index  element={<Dashboard /> } />
-            <Route  path='enquiry'  element={<Enquiry /> } />
-            <Route  path='enquiry/:id'  element={<ViewEnq /> } />
-            <Route  path='blog-list'  element={<Bloglist /> } />
-            <Route  path='blog-category-list'  element={<BlogCatList /> } />
-            <Route  path='orders'  element={<Order /> } />
-            <Route  path='order/:id'  element={<ViewOrder /> } />
-            <Route  path='customers'  element={<Customer /> } />
-            <Route  path='product' element={<AddProduct />}/>
-            <Route  path='product-list'  element={<ProductList /> } />
-            <Route  path='category' element={<AddCategory />}/>
-            <Route  path='category/:id' element={<AddCategory />}/>
-            <Route  path='category-list' element={<CategoryList />}/>
-            <Route  path='brand' element={<AddBrand />}/>
-            <Route  path='brand/:id' element={<AddBrand />}/>
-            <Route  path='brand-list' element={<Brandlist />}/>
-            <Route  path='color' element={<AddColor /> }/>
-            <Route  path='color/:id' element={<AddColor /> }/>
-            <Route  path='color-list' element={<Colorlist />}/>
-            <Route  path='add-blog' element={<AddBlog />}/>
-            <Route  path='add-blog/:id' element={<AddBlog />}/>
-            <Route  path='category-blog' element={<AddBlogCat />}/>
-            <Route  path='category-blog/:id' element={<AddBlogCat />}/>
-            <Route  path='add-coupon' element={<AddCoupon />}/>
-            <Route  path='add-coupon/:id' element={<AddCoupon />}/>
-            <Route  path='add-coupon/:id' element={<AddCoupon />}/>
-            <Route  path='coupon-list' element={<CouponList />}/>
+          <Route path="*" element={<Error />} />
+          <Route path="/admin" element={<PrivateRoutes> <MainLayout /> </PrivateRoutes>}>
+            <Route  index  element={<PrivateRoutes> <Dashboard /> </PrivateRoutes> } />
+            <Route  path='enquiry'  element={<PrivateRoutes><Enquiry /></PrivateRoutes> } />
+            <Route  path='enquiry/:id'  element={<PrivateRoutes><ViewEnq /></PrivateRoutes> } />
+            <Route  path='blog-list'  element={<PrivateRoutes><Bloglist /></PrivateRoutes> } />
+            <Route  path='blog-category-list'  element={<PrivateRoutes><BlogCatList /></PrivateRoutes> } />
+            <Route  path='orders'  element={<PrivateRoutes><Order /></PrivateRoutes> } />
+            <Route  path='order/:id'  element={<PrivateRoutes><ViewOrder /> </PrivateRoutes>} />
+            <Route  path='customers'  element={<PrivateRoutes><Customer /></PrivateRoutes> } />
+            <Route  path='product' element={<PrivateRoutes><AddProduct /></PrivateRoutes>}/>
+            <Route  path='product/:id' element={<PrivateRoutes><AddProduct /></PrivateRoutes>}/>
+            <Route  path='product-list'  element={<PrivateRoutes><ProductList /> </PrivateRoutes>} />
+            <Route  path='category' element={<PrivateRoutes><AddCategory /></PrivateRoutes>}/>
+            <Route  path='category/:id' element={<PrivateRoutes><AddCategory /></PrivateRoutes>}/>
+            <Route  path='category-list' element={<PrivateRoutes><CategoryList /></PrivateRoutes>}/>
+            <Route  path='brand' element={<PrivateRoutes><AddBrand /></PrivateRoutes>}/>
+            <Route  path='brand/:id' element={<PrivateRoutes><AddBrand /></PrivateRoutes>}/>
+            <Route  path='brand-list' element={<PrivateRoutes><Brandlist /></PrivateRoutes>}/>
+            <Route  path='color' element={<PrivateRoutes><AddColor /> </PrivateRoutes>}/>
+            <Route  path='color/:id' element={<PrivateRoutes><AddColor /></PrivateRoutes> }/>
+            <Route  path='color-list' element={<PrivateRoutes><Colorlist /></PrivateRoutes>}/>
+            <Route  path='add-blog' element={<PrivateRoutes><AddBlog /></PrivateRoutes>}/>
+            <Route  path='add-blog/:id' element={<PrivateRoutes><AddBlog /></PrivateRoutes>}/>
+            <Route  path='category-blog' element={<PrivateRoutes><AddBlogCat /></PrivateRoutes>}/>
+            <Route  path='category-blog/:id' element={<PrivateRoutes><AddBlogCat /></PrivateRoutes>}/>
+            <Route  path='add-coupon' element={<PrivateRoutes><AddCoupon /></PrivateRoutes>}/>
+            <Route  path='add-coupon/:id' element={<PrivateRoutes><AddCoupon /></PrivateRoutes>}/>
+            {/* <Route  path='add-coupon/:id' element={<PrivateRoutes><AddCoupon /></PrivateRoutes>}/> */}
+            <Route  path='coupon-list' element={<PrivateRoutes><CouponList /></PrivateRoutes>}/>
+            <Route path='profile/:id' element={<PrivateRoutes><Profile /></PrivateRoutes>}/>
           </Route>
         </Routes>
       </BrowserRouter>

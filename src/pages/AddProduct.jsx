@@ -12,8 +12,8 @@ import { getColors } from "../features/color/colorSlice";
 import { Select } from "antd";
 import Dropzone from "react-dropzone";
 import { delImage, uploadImage } from "../features/upload/uploadSlice";
-import { useNavigate } from "react-router-dom";
-import { createProducts } from "../features/product/productSlice";
+import { useNavigate,useLocation } from "react-router-dom";
+import { createProducts,getAProduct,resetState, updateAProd } from "../features/product/productSlice";
 
 let userSchema = Yup.object({
   title: Yup.string().required("Title is Required"),
@@ -33,23 +33,57 @@ const AddProduct = () => {
   const navigate = useNavigate()
   const [color, setColor] = useState([]);
 
+  const local = useLocation()
+  const getProdID = local.pathname.split("/")[3]
 
+  useEffect(()=>{
+    if(getProdID !== undefined){
+      dispatch(getAProduct(getProdID))
+      img.push(productImage)
+    }else{
+      dispatch(resetState())
+    }
+  },[getProdID])
+  
   useEffect(() => {
     dispatch(getBrands());
     dispatch(getproCategory());
     dispatch(getColors());
   }, []);
 
+ 
+
   const brandState = useSelector((state) => state.brand.brands);
   const proCatState = useSelector((state) => state.proCat.proCategory);
   const colorState = useSelector((state) => state.color.colors);
   const imgState = useSelector((state) => state.upload.images);
   const newProduct = useSelector((state) => state.product);
-  const {isError, isLoading, isSuccess, createdProduct} = newProduct
-  console.log(colorState);
+  const {
+    isError, 
+    isLoading, 
+    isSuccess, 
+    createdProduct,
+    productTitle, 
+    productDescription,
+    productImage,
+    productCategory,
+    productBrand,
+    productPrice,
+    productQuantity,
+    productTag,
+    productColor,
+    updatedProduct
+  } = newProduct
+  
+
+
+
   useEffect(()=> {
     if(isSuccess && createdProduct){
       toast.success('Product Added Successfully!');
+    }
+    if (isSuccess && updatedProduct) {
+      toast.success("Product Updated Successfullly!");
     }
     if(isError){
       toast.error('Sorry! Server Error');
@@ -76,26 +110,33 @@ const AddProduct = () => {
   useEffect(() => {
     formik.values.color = color ? color : " " ;
     formik.values.images = img;
-  },[color,img])
+  },[color,productImage])
 
+  
 
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      title: "",
-      description: "",
-      price: "",
-      category: "",
-      brand: "",
-      color: "",
-      quantity: "",
-      tags:"",
+      title: productTitle || "",
+      description: productDescription || "",
+      price: productPrice || "",
+      category: productCategory || "",
+      brand: productBrand || "",
+      color: productColor || "",
+      quantity: productQuantity || "",
+      tags: productTag || "",
       images: ""
     },
     validationSchema: userSchema,
     onSubmit: (values) => {
-      // alert(JSON.stringify(values))
-      dispatch(createProducts(values))
+      if(getProdID !== undefined){
+        dispatch(getAProduct(getProdID))
+        const data = {id:getProdID, prodData: values}
+        dispatch(updateAProd(data))
+      }else{
+        dispatch(createProducts(values))
+      }
       formik.resetForm()
       setTimeout(()=> {
         navigate("/admin/product-list")
@@ -109,7 +150,7 @@ const AddProduct = () => {
     
     
   }
-  console.log(color);
+
   const [desc, setDesc] = useState();
   const handleDesc = (e) => {
     // e.target.value
@@ -117,7 +158,7 @@ const AddProduct = () => {
   };
   return (
     <div className="d-flex gap-3 flex-column">
-      <h3 className="mb-4 title">AddProduct</h3>
+      <h3 className="mb-4 title">{getProdID !== undefined ? "Edit Product": "Add Product"}</h3>
       <div>
         <form action="" onSubmit={formik.handleSubmit}>
           <CustomInput
@@ -275,7 +316,7 @@ const AddProduct = () => {
             type="submit"
             className="btn btn-success border-0 rounded-3 my-3"
           >
-            Add Product
+            {getProdID !== undefined ? "Edit Product": "Add Product"}
           </button>
         </form>
       </div>

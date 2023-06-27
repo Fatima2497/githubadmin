@@ -14,30 +14,29 @@ const columns = [
       dataIndex: "key",
     },
     {
-      title: "Name",
+      title: "Product Name",
       dataIndex: "name",
     },
     {
-      title: "Product",
-      dataIndex: "product",
+      title: "Brand",
+      dataIndex: "brand",
     },
     {
-      title: "Order Date",
-      dataIndex: "date",
+      title: "Color",
+      dataIndex: "color",
     },
     {
-      title: "Total Amount",
-      dataIndex: "amount",
+      title: "Quantity",
+      dataIndex: "quantity",
     },
     {
-      title: "Status",
-      dataIndex: "status",
+      title: "Payement Method",
+      dataIndex: "payementmethod",
     },
   ];
  
   
 const ViewOrder = () => {
-  const options = { year: 'numeric', month: 'long`', day: 'numeric' };
   const dispatch = useDispatch()
 
   const local = useLocation()
@@ -47,31 +46,31 @@ const ViewOrder = () => {
     dispatch(getSingleOrders(orderId))
   },[])
 
-  // const orderState = useSelector((state) => state.auth.orders)
+  const orderState = useSelector((state) => state.auth.singleorder)
   // console.log(orderState);
-  // const data1 = [];
-  // for (let i = 0; i < orderState.length; i++) {
-  //   data1.push({
-  //     key: i,
-  //     name: orderState[i].orderBy.firstname + " " + orderState[i].orderBy.lastname,
-  //     product: orderState[i].products?.product?.title,
-  //     date: new Date(orderState[i].createdAt).toLocaleString('ur-PK', {
-  //       day: 'numeric',
-  //       month: 'numeric',
-  //       year: 'numeric',
-  //       hour: 'numeric',
-  //       minute: 'numeric'
-  //     }),
-  //     amount: orderState[i].paymentIntent.amount,
-  //     status: orderState[i].orderStatus,
-  //   });
-  // }
-
+  const data1 = [];
+  for (let i = 0; i < orderState?.orderItems?.length; i++) {
+    data1.push({
+      key: i,
+      name: orderState?.orderItems[i]?.product?.title?.substr(0,15),
+      brand: orderState?.orderItems[i]?.product?.brand,
+      color: (
+        <>
+        <ul className='list-group'>
+          <li className='list-group-item' style={{backgroundColor:  orderState?.orderItems[i]?.color?.title,}}></li>
+        </ul>
+        </>
+      ),
+      quantity: orderState?.orderItems[i]?.quantity,
+      payementmethod: orderState?.paymentInfo?.cashonOrder,
+    });
+  }
+  console.log(data1);
   return (
     <div>
     <h3 className="mb-4 title">View Order </h3>
     <div>
-    {/* <Table columns={columns} dataSource={data1}  className="bg-white"/> */}
+    <Table columns={columns} dataSource={data1}  className="bg-white"/>
     </div>
 </div>
   )

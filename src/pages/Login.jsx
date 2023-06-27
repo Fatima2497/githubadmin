@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux/es";
 import { useSelector } from "react-redux";
 import {login} from '../features/auth/authSlice'
+import { toast } from "react-toastify";
 
 const Login = () => {
 
@@ -25,17 +26,20 @@ const Login = () => {
     validationSchema: userSchema,
     onSubmit: (values) => {
       dispatch(login(values))
-      alert(JSON.stringify(values, null, 2));
     },
   });
+
+ 
 
   const {user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth)
 
   useEffect(() => {
-    if(isSuccess) {
+    if(isSuccess && user) {
+      toast.info("Login Successfully")
       navigate("admin")
-    }else{
-      navigate("")
+    }
+    if(isError){
+      toast.error("Invalid Credential")
     }
   },[user, isLoading, isError, isSuccess, message])
   return (
@@ -80,7 +84,7 @@ const Login = () => {
                 <div>{formik.errors.password}</div>
               ) : null}
             </div>
-              <div className="mb-3 text-end">
+              <div className="mb-3 text-end mt-3">
                 <Link to="forgetpassword">Forgot Password?</Link>
               </div>
               <button
